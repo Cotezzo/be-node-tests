@@ -30,7 +30,7 @@ fib(20);
 })(20);
 
 
-/* ---- Guess the number (non funzia) ------------------- *
+/* ---- Guess the number -------------------------------- *
 const readline = require('readline');
 
 const rl = readline.createInterface({
@@ -82,7 +82,7 @@ const eq = (a, b) => a ? -b/a : "Non esiste";
 console.log(eq(0, 10));
 
 
-/* ---- Doppie ------------------------------------------ *
+/* ---- Controlla Doppie -------------------------------- *
 const str = "asdkl-saopj asijuisf usafasn8fa87n0fn87as890fnsa890nf890na 89n0fs980nasf98 0na980nsf980na9f08a908sf890as890f908as908f89an0sf89n0s890nfafasfasfasfasfaklsflaksjflaksjflaskjflaksjflaskjfaskjflaskjfalskjflaksjflkajsflkjasflkjassfsda";
 
 /* ------------------------- *
@@ -110,50 +110,49 @@ const checkDoppieRegexp = str => !!str.match(/(.)\1/)
 console.log(checkDoppieRegexp(str));
 
 
-/* ------------------------------------------------------ *
-// Inizializzo matrice e array semplici
-const mat = [];                                         // Memorizza tutti i valori
-const rowSums = [];                                     // Memorizza somma di valori di ogni riga
-const colSums = [];                                     // Memorizza somma di valori di ogni colonna
+/* ---- Random Matrix ------------------------------------------------------------------------------------------------------------- */
+const readline = require('readline');
 
-for(let i = 0; i < 4; i++){                             // Per ogni riga
-    mat.push([]);                                       // Inizializza un nuovo array (nuova riga di matrice)
-    for(let j = 0; j < 3; j++){                         // Per ogni elemento di ogni riga
-        const rand = Math.floor(Math.random() * 9) + 1; // Genera un numero pseudo-randomico
-        mat[i].push(rand);                              // Aggiungi il numero alla matrice
-        rowSums[i] = (rowSums[i] ?? 0) + rand;          // Aggiungilo alla somma di questa riga (se il valore non c'è, inizializzalo a 0)
-        colSums[j] = (colSums[j] ?? 0) +  rand;         // Aggiungilo alla somma di questa colonna (se il valore non c'è, inizializzalo a 0)
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const print = str => process.stdout.write(str);                 // Java moment (console.log starts a new line, I need inline print)
+
+const randomMatrix = (numberOfRows, numberOfCols) => {          // Params: matrix sizes
+    // const mat = [];                                          //! Saves all the matrix values
+    const rowSums = [];                                         //# Saves the sums of each row values
+    const colSums = [];                                         // Saves the sums of each column values
+
+    for (let i = 0; i < numberOfRows; i++) {                    // For each matrix row
+        //  mat.push([]);                                       //! Inserts a new array (row) to the matrix
+        for (let j = 0; j < numberOfCols; j++) {                // For each element of this row
+            const rand = Math.floor(Math.random() * 9) + 1;     // Generates a pseudo-random number
+            //  mat[i].push(rand);                              //! Inserts in in the matrix (at [i][j])
+            rowSums[i] = (rowSums[i] ?? 0) + rand;              // Adds the value to the row sum (init at 0 if undefined)
+            colSums[j] = (colSums[j] ?? 0) + rand;              // Adds the value to the column sum (init at 0 if undefined)
+
+            print(rand + "  ");                                 // Print generated number (matrix)
+        }
+        print("  " + rowSums[i] + "\n");                        // Print row sum (next to the matrix)
     }
+    print("\n" + colSums.reduce((tot, el) => tot + " " + el));  // Print column sums (under the matrix)
 }
 
-// Stampa tutti i valori
-console.log("\nMatrice: ");
-console.table(mat);
+rl.question('Insert matrix size (ex:4 3): ', input => {
+    if (!/^[0-9]+ [0-9]+$/.test(input)) console.log("Hai cannato. ");
+    else randomMatrix(...input.split(/ /).map(el => parseInt(el)));
+    rl.close();
+});
 
-console.log("\nRow Sums: ");
-console.table(rowSums);
-
-console.log("\nColumn Sums: ");
-console.table(colSums);
-
-/* ------------------------------------------------------ */
-const numberOfRows = 4;                                 // Dimensioni della matrice
-const numberOfCols = 3;                                 //           ^^
-
-// const mat = [];                                      //# Memorizza tutti i valori
-const rowSums = [];                                     // Memorizza somma di valori di ogni riga //* si potrebbe non salvare
-const colSums = [];                                     // Memorizza somma di valori di ogni colonna
-
-for(let i = 0; i < numberOfRows; i++){                  // Per ogni riga teorica della matrice
-    //  mat.push([]);                                   //# Inserisci un nuovo array (crea effettivamente la nuova riga di matrice)
-    for(let j = 0; j < numberOfCols; j++){              // Per ogni elemento teorico di ogni riga
-        const rand = Math.floor(Math.random() * 9) + 1; // Genera un numero pseudo-randomico
-        //  mat[i].push(rand);                          //# Ed inseriscilo nella matrice (in posizione [i][j])
-        rowSums[i] = (rowSums[i] ?? 0) + rand;          // Aggiungilo alla somma di questa riga (se undefined, inizializzalo a 0)
-        colSums[j] = (colSums[j] ?? 0) +  rand;         // Aggiungilo alla somma di questa colonna (se undefined, inizializzalo a 0)
-
-        process.stdout.write(rand + "  ");              // Stampa il numero (matrice)
-    }
-    process.stdout.write("  " + rowSums[i] + "\n");     // Stampa la somma della riga (colonna di somme affianco alla matrice)
-}
-process.stdout.write("\n" + colSums.reduce((tot, el) => tot + " " + el));   // Stampa le somme delle colonne (riga sotto alla matrice)
+/**
+ * expected output:
+ *
+ * 9  8  6    23
+ * 7  9  9    25
+ * 4  2  5    11
+ * 1  6  1    8
+ *
+ * 21 25 21
+ */
